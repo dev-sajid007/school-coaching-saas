@@ -28,15 +28,7 @@ Route::middleware(['auth', 'role:teacher'])->group(function () {
     
     // Student Management Routes
     Route::get('/teacher/students', [TeacherController::class, 'students'])->name('teacher.students.index');
-    Route::get('/teacher/students/{student}', [TeacherController::class, 'showStudent'])->name('teacher.students.show');
-    
-    // Session Management Routes
-    Route::get('/teacher/sessions', [TeacherController::class, 'sessions'])->name('teacher.sessions.index');
-    Route::get('/teacher/sessions/create', [TeacherController::class, 'createSession'])->name('teacher.sessions.create');
-    
-    // Attendance Routes
-    Route::get('/teacher/attendance', [TeacherController::class, 'attendance'])->name('teacher.attendance.index');
-    Route::post('/teacher/attendance/mark', [TeacherController::class, 'markAttendance'])->name('teacher.attendance.mark');
 });
+
 
 require __DIR__.'/auth.php';
