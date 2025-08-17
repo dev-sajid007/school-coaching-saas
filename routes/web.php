@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +30,13 @@ Route::middleware(['auth', 'role:teacher'])->group(function () {
     
     // Student Management Routes
     Route::get('/teacher/students', [TeacherController::class, 'students'])->name('teacher.students.index');
+});
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
+    Route::get('/join-class', [EnrollmentController::class, 'joinClass'])->name('enrollment.join');
+    Route::post('/join-class', [EnrollmentController::class, 'processJoin'])->name('enrollment.process');
 });
 
 

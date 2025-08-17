@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Classroom;
 use App\Models\SchoolClass;
 use App\Models\Subject;
 use App\Models\Student;
@@ -13,19 +14,19 @@ class TeacherController extends Controller
     public function index()
     {
         $teacher = Auth::user();
-        
+
         $stats = [
             'total_classes' => $teacher->classes()->count(),
             'total_students' => $teacher->classes()->withCount('students')->get()->sum('students_count'),
             'active_classes' => $teacher->classes()->where('is_active', true)->count(),
         ];
-        
+
         $recentClasses = $teacher->classes()
             ->with(['subject', 'students'])
             ->latest()
             ->take(5)
             ->get();
-        
+
         return view('teacher.dashboard', compact('teacher', 'stats', 'recentClasses'));
     }
 
@@ -36,17 +37,28 @@ class TeacherController extends Controller
             ->with(['subject', 'students'])
             ->latest()
             ->paginate(10);
-        
+
         return view('teacher.classes.index', compact('classes'));
     }
 
     public function createClass()
     {
         $subjects = Subject::where('is_active', true)->orderBy('name')->get();
-        $gradeLevels = ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 
-                       'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10',
-                       'Grade 11', 'Grade 12'];
-        
+        $gradeLevels = [
+            'Grade 1',
+            'Grade 2',
+            'Grade 3',
+            'Grade 4',
+            'Grade 5',
+            'Grade 6',
+            'Grade 7',
+            'Grade 8',
+            'Grade 9',
+            'Grade 10',
+            'Grade 11',
+            'Grade 12'
+        ];
+
         return view('teacher.classes.create', compact('subjects', 'gradeLevels'));
     }
 
@@ -87,7 +99,16 @@ class TeacherController extends Controller
         })->with(['user', 'classes' => function ($query) use ($teacher) {
             $query->where('teacher_id', $teacher->id);
         }])->paginate(15);
-        
+
         return view('teacher.students.index', compact('students'));
+    }
+
+    public function showClassroom($id)
+    {
+        $classroom = Classroom::where('user_id', Auth::id())
+            ->with(['students.user', 'exams'])
+            ->findOrFail($id);
+
+        return view('teacher.classroom.show', compact('classroom'));
     }
 }
