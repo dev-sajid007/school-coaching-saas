@@ -46,20 +46,24 @@ class User extends Authenticatable
         ];
     }
 
-    // ...existing code...
-
-    public function subscription()
+     // Teacher relationships
+    public function classes()
     {
-        return $this->hasOne(Subscription::class);
+        return $this->hasMany(SchoolClass::class, 'teacher_id');
     }
 
-    public function classrooms()
+    public function sessions()
     {
-        return $this->hasMany(Classroom::class, 'user_id');
+        return $this->hasMany(TeachingSession::class, 'teacher_id');
     }
 
-    public function students()
+    public function isTeacher()
     {
-        return $this->hasMany(Student::class);
+        return $this->role === 'teacher';
+    }
+
+    public function isStudent()
+    {
+        return $this->role === 'student';
     }
 }
